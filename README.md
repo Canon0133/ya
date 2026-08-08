@@ -1,2 +1,1 @@
-# Kas-Grand-Country-Strive
-Kas Commun Strive
+# 6Brave
