@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6BFix3 — 6B.EXE KELULUSAN</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cyan:#00d4ff;--cyan2:#00f5ff;--cyan-glow:rgba(0,212,255,0.45);
+  --navy:#020b16;--navy2:#071828;--navy3:#0b2035;
+  --text:#d4f0ff;--text-dim:rgba(200,238,255,0.38);
+  --gold:#f5c842;--gold2:#ffe680;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);font-family:'Share Tech Mono',monospace;color:var(--text);overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.018;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+background-size:180px;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;
+background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.022) 2px,rgba(0,0,0,0.022) 4px);}
+
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;background:var(--cyan);border-radius:50%;animation:floatUp var(--dur) linear var(--delay) infinite;opacity:0;}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(1)}10%{opacity:var(--op)}90%{opacity:var(--op)}100%{opacity:0;transform:translateY(-100vh) scale(0.4)}}
+
+#bootScreen{position:fixed;inset:0;z-index:1000;background:var(--navy);display:flex;align-items:center;justify-content:center;transition:opacity 1s ease;}
+#bootScreen.hide{opacity:0;pointer-events:none;}
+.boot-box{
+  border:1px solid rgba(0,212,255,0.45);border-radius:22px;
+  padding:56px 64px;text-align:center;
+  background:linear-gradient(135deg,rgba(0,212,255,0.05),rgba(0,212,255,0.01));
+  box-shadow:0 0 80px rgba(0,212,255,0.18),0 0 160px rgba(0,212,255,0.05),inset 0 0 60px rgba(0,212,255,0.03);
+  min-width:380px;max-width:90vw;position:relative;overflow:hidden;
+}
+.boot-box::before,.boot-box::after{content:'';position:absolute;border-color:rgba(0,212,255,0.5);border-style:solid;}
+.boot-box::before{top:14px;left:14px;width:24px;height:24px;border-width:2px 0 0 2px;}
+.boot-box::after{bottom:14px;right:14px;width:24px;height:24px;border-width:0 2px 2px 0;}
+.boot-title{font-family:'Orbitron',monospace;font-size:clamp(2rem,6vw,3.2rem);font-weight:900;color:var(--text);text-shadow:0 0 30px var(--cyan),0 0 70px rgba(0,212,255,0.25);letter-spacing:6px;margin-bottom:10px;}
+.boot-sub{font-size:0.8rem;color:var(--cyan);letter-spacing:3px;margin-bottom:36px;white-space:nowrap;opacity:0.8;}
+.booting-sub{font-size:0.8rem;color:var(--cyan);letter-spacing:3px;margin-bottom:24px;white-space:nowrap;opacity:0.8;}
+#runBtn{
+  background:linear-gradient(135deg,#004466,#009acc,#00d4ff,#009acc,#004466);
+  background-size:300% 300%;animation:btnShimmer 3s ease infinite;
+  color:var(--navy);font-family:'Orbitron',monospace;font-weight:900;
+  font-size:1rem;letter-spacing:4px;padding:18px 52px;
+  border:none;border-radius:60px;cursor:pointer;
+  box-shadow:0 0 50px var(--cyan-glow),0 10px 40px rgba(0,0,0,0.5);
+  transition:transform 0.25s,box-shadow 0.25s;
+}
+#runBtn:hover{transform:scale(1.07) translateY(-2px);box-shadow:0 0 80px var(--cyan),0 14px 50px rgba(0,0,0,0.5);}
+@keyframes btnShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+#bootingState{display:none;}#bootingState.active{display:block;}#runState.hide{display:none;}
+.booting-title{font-family:'Orbitron',monospace;font-size:clamp(1rem,3.5vw,1.8rem);font-weight:700;color:var(--text);text-shadow:0 0 20px var(--cyan);letter-spacing:3px;margin-bottom:10px;}
+.progress-bar{width:100%;height:6px;background:rgba(0,212,255,0.08);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#004466,#00aacc,var(--cyan2));border-radius:10px;box-shadow:0 0 16px var(--cyan),0 0 32px rgba(0,212,255,0.25);transition:width 0.08s linear;}
+.boot-log{margin-top:18px;font-size:0.62rem;color:var(--text-dim);text-align:left;min-height:64px;line-height:1.9;overflow:hidden;}
+
+#mainContent{opacity:0;transition:opacity 1.2s ease;position:relative;z-index:2;}
+#mainContent.show{opacity:1;}
+
+.hero-text{padding:60px 20px 28px;text-align:center;}
+.hero-class{font-family:'Orbitron',monospace;font-size:clamp(3.5rem,14vw,8rem);font-weight:900;color:transparent;-webkit-text-stroke:2px var(--cyan);text-shadow:0 0 50px var(--cyan-glow),0 0 100px rgba(0,212,255,0.1);letter-spacing:8px;}
+.hero-year{font-size:0.68rem;letter-spacing:6px;color:var(--text-dim);text-transform:uppercase;margin-top:12px;}
+.hero-underline{width:180px;height:2px;background:linear-gradient(to right,transparent,var(--cyan),transparent);margin:16px auto 0;animation:pulse 2.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:0.3;width:100px}50%{opacity:1;width:240px}}
+
+.sec{padding:40px 24px;max-width:980px;margin:0 auto;}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.section-tag{font-family:'Orbitron',monospace;font-size:0.6rem;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;background:rgba(0,212,255,0.07);padding:5px 14px;border-radius:30px;border:1px solid rgba(0,212,255,0.22);box-shadow:0 0 14px rgba(0,212,255,0.1);}
+.section-line{flex:1;height:1px;background:linear-gradient(to right,rgba(0,212,255,0.4),transparent);}
+
+.corner{position:absolute;border-color:var(--cyan);border-style:solid;z-index:2;opacity:0.5;transition:opacity 0.3s;}
+.corner.tl{top:8px;left:8px;width:16px;height:16px;border-width:2px 0 0 2px;}
+.corner.tr{top:8px;right:8px;width:16px;height:16px;border-width:2px 2px 0 0;}
+.corner.bl{bottom:8px;left:8px;width:16px;height:16px;border-width:0 0 2px 2px;}
+.corner.br{bottom:8px;right:8px;width:16px;height:16px;border-width:0 2px 2px 0;}
+
+.videos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px;}
+.video-frame{position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(0,212,255,0.18);box-shadow:0 0 24px rgba(0,212,255,0.07),0 12px 40px rgba(0,0,0,0.65);transition:transform 0.4s cubic-bezier(.2,0,0,1),box-shadow 0.4s,border-color 0.3s;background:var(--navy2);}
+.video-frame:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 0 60px rgba(0,212,255,0.2),0 24px 60px rgba(0,0,0,0.7);border-color:rgba(0,212,255,0.5);}
+.video-frame:hover .corner{opacity:1;}
+.video-frame video{width:100%;display:block;}
+.video-label{position:absolute;bottom:0;left:0;right:0;padding:28px 14px 12px;background:linear-gradient(transparent,rgba(2,11,22,0.94));font-size:0.58rem;letter-spacing:2px;color:rgba(0,212,255,0.6);text-align:center;}
+
+.photos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;}
+.photo-frame{position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(0,212,255,0.14);box-shadow:0 0 20px rgba(0,212,255,0.05),0 10px 30px rgba(0,0,0,0.55);transition:transform 0.4s cubic-bezier(.2,0,0,1),box-shadow 0.4s,border-color 0.3s;cursor:pointer;background:var(--navy2);}
+.photo-frame:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 0 55px rgba(0,212,255,0.2),0 22px 55px rgba(0,0,0,0.7);border-color:rgba(0,212,255,0.5);}
+.photo-frame:hover .corner{opacity:1;}
+.photo-frame img{width:100%;display:block;object-fit:cover;aspect-ratio:4/3;transition:transform 0.55s ease,filter 0.4s;filter:saturate(0.88);}
+.photo-frame:hover img{transform:scale(1.06);filter:saturate(1.1);}
+.photo-frame::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.05),transparent);opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.photo-frame:hover::after{opacity:1;}
+.photo-label{position:absolute;bottom:0;left:0;right:0;padding:28px 14px 12px;background:linear-gradient(transparent,rgba(2,11,22,0.94));font-size:0.58rem;letter-spacing:2px;color:rgba(0,212,255,0.6);text-align:center;}
+
+.music-player{background:linear-gradient(135deg,rgba(0,212,255,0.07),rgba(0,212,255,0.02));border:1px solid rgba(0,212,255,0.2);border-radius:20px;padding:24px 28px;display:flex;align-items:center;gap:18px;box-shadow:0 0 50px rgba(0,212,255,0.08),0 14px 45px rgba(0,0,0,0.35);transition:box-shadow 0.3s,border-color 0.3s;position:relative;overflow:hidden;}
+.music-player::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(0,212,255,0.06),transparent 65%);pointer-events:none;}
+.music-player:hover{box-shadow:0 0 70px rgba(0,212,255,0.13),0 18px 55px rgba(0,0,0,0.4);border-color:rgba(0,212,255,0.35);}
+.music-icon{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--cyan2),#006688);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;animation:spinSlow 10s linear infinite paused;box-shadow:0 0 0 8px rgba(0,212,255,0.07),0 0 28px rgba(0,212,255,0.4);cursor:pointer;z-index:1;transition:box-shadow 0.3s;}
+.music-icon.playing{animation-play-state:running;box-shadow:0 0 0 12px rgba(0,212,255,0.1),0 0 45px rgba(0,212,255,0.55);}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+.music-info{flex:1;min-width:0;}
+.music-title{font-family:'Orbitron',monospace;font-size:0.75rem;letter-spacing:2px;color:var(--cyan);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.music-status{font-size:0.6rem;color:var(--text-dim);letter-spacing:2px;}
+.music-wave{display:flex;gap:3px;align-items:flex-end;height:20px;opacity:0.15;transition:opacity 0.3s;}
+.music-wave.active{opacity:1;}
+.wave-bar{width:3px;background:linear-gradient(to top,#006688,var(--cyan));border-radius:2px;animation:wave var(--spd) ease-in-out infinite alternate;}
+@keyframes wave{from{height:4px}to{height:var(--h)}}
+
+.quote-box{background:linear-gradient(135deg,rgba(0,212,255,0.05),rgba(0,212,255,0.015));border:1px solid rgba(0,212,255,0.14);border-radius:20px;padding:40px 36px;position:relative;overflow:hidden;text-align:center;box-shadow:0 0 60px rgba(0,212,255,0.06),0 24px 65px rgba(0,0,0,0.45);}
+.quote-box::before{content:'>';position:absolute;top:18px;left:22px;font-family:'Orbitron',monospace;font-size:1rem;color:var(--cyan);opacity:0.18;}
+.quote-box::after{content:'"';position:absolute;bottom:-30px;right:16px;font-size:10rem;color:rgba(0,212,255,0.03);pointer-events:none;line-height:1;}
+.quote-text{font-family:'Nunito',sans-serif;font-size:clamp(0.95rem,2.5vw,1.15rem);line-height:1.9;color:var(--text);font-weight:300;}
+.quote-author{margin-top:18px;font-size:0.62rem;letter-spacing:4px;color:var(--cyan);text-transform:uppercase;opacity:0.65;}
+
+.chip-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px;}
+.chip{padding:9px 20px;border-radius:50px;font-family:'Share Tech Mono',monospace;font-size:0.8rem;letter-spacing:1px;cursor:default;transition:all 0.25s ease;white-space:nowrap;}
+.chip-cyan{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.26);color:var(--cyan);}
+.chip-cyan:hover{background:rgba(0,212,255,0.16);box-shadow:0 0 22px rgba(0,212,255,0.28);transform:scale(1.05) translateY(-2px);}
+.chip-gold{background:rgba(245,200,66,0.07);border:1px solid rgba(245,200,66,0.32);color:var(--gold);}
+.chip-gold:hover{background:rgba(245,200,66,0.18);box-shadow:0 0 22px rgba(245,200,66,0.28);transform:scale(1.05) translateY(-2px);}
+@keyframes chipPop{from{opacity:0;transform:scale(0.5) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+footer{padding:50px 20px 36px;text-align:center;position:relative;z-index:2;background:linear-gradient(180deg,transparent,rgba(0,212,255,0.02));}
+footer::before{content:'';display:block;height:1px;background:linear-gradient(to right,transparent,rgba(0,212,255,0.5),transparent);opacity:0.25;margin-bottom:36px;}
+.footer-logo{font-family:'Orbitron',monospace;font-size:1.4rem;color:var(--cyan);text-shadow:0 0 20px var(--cyan-glow);letter-spacing:6px;margin-bottom:10px;}
+.footer-text{font-size:0.62rem;letter-spacing:4px;color:var(--text-dim);text-transform:uppercase;}
+
+#lightbox{display:none;position:fixed;inset:0;z-index:500;background:rgba(2,11,22,0.97);align-items:center;justify-content:center;backdrop-filter:blur(18px);}
+#lightbox.open{display:flex;}
+#lightbox img{max-width:92vw;max-height:92vh;border-radius:14px;border:1px solid rgba(0,212,255,0.28);box-shadow:0 0 90px rgba(0,212,255,0.18),0 40px 100px rgba(0,0,0,0.7);}
+.close-lb{position:absolute;top:22px;right:28px;font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:3px;color:rgba(0,212,255,0.45);cursor:pointer;background:none;border:none;text-transform:uppercase;transition:color 0.2s;}
+.close-lb:hover{color:var(--cyan);}
+
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+.chip-count{font-size:0.56rem;letter-spacing:3px;color:rgba(0,212,255,0.28);margin-top:16px;text-align:center;}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 1s ease,transform 1s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<div id="lightbox">
+  <button class="close-lb" onclick="closeLb()">✕</button>
+  <img id="lbImg" src="" alt="">
+</div>
+
+<audio id="bgMusic" loop>
+  <source src="musik.mp3" type="audio/mpeg">
+</audio>
+<audio id="bgMusic2" loop>
+  <source src="musik2.mp3" type="audio/mpeg">
+</audio>
+
+<!-- BOOT SCREEN -->
+<div id="bootScreen">
+  <div class="boot-box">
+    <div id="runState">
+      <div class="boot-title">6B SYSTEM</div>
+      <div class="boot-sub">[ Ready to Execute ]</div>
+      <button id="runBtn" onclick="startBoot()">RUN 6B.EXE</button>
+    </div>
+    <div id="bootingState">
+      <div class="booting-title">Analyzing Memory 6B</div>
+      <div class="boot-sub">[ Ready to Execute ]</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="boot-log" id="bootLog"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="mainContent">
+
+  <!-- HERO -->
+  <div class="hero-text">
+    
+    <div class="hero-class">KELAS 6B</div>
+    <div class="hero-underline"></div>
+    <div class="hero-year">// KELULUSAN · TAHUN AJARAN 2025/2026 //</div>
+  </div>
+
+  <!-- VIDEOS -->
+  <section class="sec reveal">
+    <div class="section-header">
+      <span class="section-tag">▶ VIDEO</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="videos-grid">
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio1.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio2.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio3.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio4.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio5.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio6.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio7.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO //</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHOTOS -->
+  <section class="sec reveal">
+    <div class="section-header">
+      <span class="section-tag">📸 FOTO</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="photos-grid">
+      <div class="photo-frame" onclick="openLb('foto1.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto1.jpg" alt="Foto 1" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto2.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto2.jpg" alt="Foto 2" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto3.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto3.jpg" alt="Foto 3" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto4.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto4.jpg" alt="Foto 4" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto5.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto5.jpg" alt="Foto 5" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto6.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto6.jpg" alt="Foto 6" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto7.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto7.jpg" alt="Foto 7" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto8.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto8.jpg" alt="Foto 8" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto9.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto9.jpg" alt="Foto 9" loading="lazy">
+        <div class="photo-label">// FOTO //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto10.jpg')">
+        <div class="corner tl"></div><
