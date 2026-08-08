@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6BFix3 — 6B.EXE KELULUSAN</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00d4ff;
+    --cyan-glow: rgba(0,212,255,0.4);
+    --navy: #040d1a;
+    --text: #c8eeff;
+    --text-dim: rgba(200,238,255,0.45);
+    --gold: #f5c842;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--navy); font-family:'Share Tech Mono',monospace; color:var(--text); overflow-x:hidden; min-height:100vh; }
+
+  /* PARTICLES */
+  #particles { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .particle { position:absolute; background:var(--cyan); border-radius:50%; animation:floatUp var(--dur) linear var(--delay) infinite; opacity:0; }
+  @keyframes floatUp {
+    0%{opacity:0;transform:translateY(0)}10%{opacity:var(--op)}90%{opacity:var(--op)}100%{opacity:0;transform:translateY(-100vh)}
+  }
+  body::after {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+  }
+
+  /* BOOT */
+  #bootScreen {
+    position:fixed; inset:0; z-index:1000; background:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    transition:opacity 0.8s ease;
+  }
+  #bootScreen.hide { opacity:0; pointer-events:none; }
+  .boot-box {
+    border:1px solid var(--cyan); border-radius:16px;
+    padding:50px 60px; text-align:center;
+    background:rgba(0,212,255,0.04);
+    box-shadow:0 0 40px var(--cyan-glow),inset 0 0 40px rgba(0,212,255,0.03);
+    min-width:360px; max-width:90vw;
+  }
+  .boot-title { font-family:'Orbitron',monospace; font-size:clamp(1.8rem,6vw,3rem); font-weight:900; color:var(--text); text-shadow:0 0 20px var(--cyan); letter-spacing:4px; margin-bottom:10px; }
+  .boot-sub { font-size:0.85rem; color:var(--cyan); letter-spacing:2px; margin-bottom:30px; white-space:nowrap; }
+  .booting-sub { font-size:0.8rem; color:var(--cyan); letter-spacing:2px; margin-bottom:24px; white-space:nowrap; }
+  #runBtn {
+    background:linear-gradient(135deg,#00aacc,#00d4ff,#00aacc); background-size:200% 200%;
+    animation:btnShimmer 2s ease infinite;
+    color:var(--navy); font-family:'Orbitron',monospace; font-weight:700;
+    font-size:1.1rem; letter-spacing:3px; padding:16px 44px;
+    border:none; border-radius:50px; cursor:pointer;
+    box-shadow:0 0 30px var(--cyan-glow); transition:transform 0.2s,box-shadow 0.2s;
+  }
+  #runBtn:hover { transform:scale(1.05); box-shadow:0 0 50px var(--cyan); }
+  @keyframes btnShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  #bootingState { display:none; }
+  #bootingState.active { display:block; }
+  #runState.hide { display:none; }
+  .booting-title { font-family:'Orbitron',monospace; font-size:clamp(1.2rem,4vw,2rem); font-weight:700; color:var(--text); text-shadow:0 0 15px var(--cyan); letter-spacing:3px; margin-bottom:10px; }
+  .progress-bar { width:100%; height:8px; background:rgba(0,212,255,0.15); border-radius:10px; overflow:hidden; }
+  .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#0088aa,var(--cyan)); border-radius:10px; box-shadow:0 0 12px var(--cyan); transition:width 0.1s linear; }
+  .boot-log { margin-top:16px; font-size:0.65rem; color:var(--text-dim); text-align:left; min-height:60px; line-height:1.6; overflow:hidden; }
+
+  /* MAIN */
+  #mainContent { opacity:0; transition:opacity 1s ease; position:relative; z-index:2; }
+  #mainContent.show { opacity:1; }
+
+  /* HERO */
+  .hero-text { padding:40px 20px 20px; text-align:center; }
+  .hero-class {
+    font-family:'Orbitron',monospace; font-size:clamp(3rem,12vw,7rem);
+    font-weight:900; color:transparent; -webkit-text-stroke:2px var(--cyan);
+    text-shadow:0 0 30px var(--cyan-glow); letter-spacing:6px;
+  }
+  @keyframes glitch {
+    0%,90%,100%{transform:translate(0);filter:none}
+    91%{transform:translate(-2px,1px);filter:hue-rotate(90deg)}
+    93%{transform:translate(2px,-1px);filter:hue-rotate(-90deg)}
+    95%{transform:translate(0);filter:none}
+    97%{transform:translate(-1px,2px)} 99%{transform:translate(1px,-1px)}
+  }
+  .hero-year { font-size:0.75rem; letter-spacing:4px; color:var(--text-dim); text-transform:uppercase; margin-top:8px; }
+
+  /* SECTIONS */
+  .sec { padding:30px 20px; max-width:960px; margin:0 auto; }
+  .section-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .section-tag { font-family:'Orbitron',monospace; font-size:0.65rem; letter-spacing:3px; color:var(--cyan); text-transform:uppercase; }
+  .section-line { flex:1; height:1px; background:linear-gradient(to right,var(--cyan),transparent); opacity:0.4; }
+
+  /* CORNER */
+  .corner { position:absolute; width:18px; height:18px; border-color:var(--cyan); border-style:solid; z-index:2; opacity:0.7; }
+  .corner.tl{top:7px;left:7px;border-width:2px 0 0 2px}
+  .corner.tr{top:7px;right:7px;border-width:2px 2px 0 0}
+  .corner.bl{bottom:7px;left:7px;border-width:0 0 2px 2px}
+  .corner.br{bottom:7px;right:7px;border-width:0 2px 2px 0}
+
+  /* VIDEOS */
+  .videos-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+  }
+  .video-frame {
+    position:relative; border-radius:14px; overflow:hidden;
+    border:1px solid rgba(0,212,255,0.3);
+    box-shadow:0 0 30px rgba(0,212,255,0.12),0 15px 40px rgba(0,0,0,0.5);
+    transition:transform 0.3s,box-shadow 0.3s;
+  }
+  .video-frame:hover { transform:translateY(-4px); box-shadow:0 0 50px rgba(0,212,255,0.25),0 20px 50px rgba(0,0,0,0.6); }
+  .video-frame video { width:100%; display:block; }
+  .video-label {
+    position:absolute; bottom:0; left:0; right:0;
+    padding:24px 12px 10px;
+    background:linear-gradient(transparent,rgba(4,13,26,0.88));
+    font-size:0.65rem; letter-spacing:2px; color:var(--cyan); text-align:center;
+  }
+
+  /* PHOTOS */
+  .photos-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:18px;
+  }
+  .photo-frame {
+    position:relative; border-radius:14px; overflow:hidden;
+    border:1px solid rgba(0,212,255,0.25);
+    box-shadow:0 0 25px rgba(0,212,255,0.1),0 12px 30px rgba(0,0,0,0.5);
+    transition:transform 0.3s,box-shadow 0.3s; cursor:pointer;
+  }
+  .photo-frame:hover { transform:translateY(-4px) scale(1.01); box-shadow:0 0 45px rgba(0,212,255,0.25); border-color:rgba(0,212,255,0.6); }
+  .photo-frame img { width:100%; display:block; object-fit:cover; aspect-ratio:4/3; }
+  .photo-label {
+    position:absolute; bottom:0; left:0; right:0;
+    padding:24px 12px 10px;
+    background:linear-gradient(transparent,rgba(4,13,26,0.88));
+    font-size:0.65rem; letter-spacing:2px; color:var(--cyan); text-align:center;
+  }
+
+  /* MUSIC */
+  .music-player {
+    background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.2);
+    border-radius:16px; padding:20px 24px;
+    display:flex; align-items:center; gap:16px;
+    box-shadow:0 0 20px rgba(0,212,255,0.08);
+  }
+  .music-icon {
+    width:44px; height:44px; border-radius:50%;
+    background:linear-gradient(135deg,#0088aa,var(--cyan));
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem; flex-shrink:0; box-shadow:0 0 15px var(--cyan-glow);
+    animation:spinSlow 8s linear infinite; cursor:pointer;
+  }
+  @keyframes spinSlow{to{transform:rotate(360deg)}}
+  .music-info { flex:1; min-width:0; }
+  .music-title { font-family:'Orbitron',monospace; font-size:0.75rem; letter-spacing:2px; color:var(--cyan); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .music-status { font-size:0.65rem; color:var(--text-dim); letter-spacing:1px; }
+  .music-wave { display:flex; gap:3px; align-items:flex-end; height:20px; }
+  .wave-bar { width:3px; background:var(--cyan); border-radius:2px; animation:wave var(--spd) ease-in-out infinite alternate; opacity:0.7; }
+  @keyframes wave{from{height:4px}to{height:var(--h)}}
+
+  /* QUOTE */
+  .quote-box {
+    background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.2);
+    border-radius:16px; padding:36px 32px; position:relative; overflow:hidden; text-align:center;
+  }
+  .quote-box::before { content:'>'; position:absolute; top:20px; left:24px; font-family:'Orbitron',monospace; font-size:1.2rem; color:var(--cyan); opacity:0.3; }
+  .quote-text { font-family:'Nunito',sans-serif; font-size:clamp(0.95rem,2.5vw,1.15rem); line-height:1.8; color:var(--text); font-weight:300; }
+  .quote-author { margin-top:16px; font-size:0.7rem; letter-spacing:3px; color:var(--cyan); text-transform:uppercase; }
+
+  /* CHIPS */
+  .chip-grid { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:16px; }
+  .chip { padding:10px 20px; border-radius:50px; font-family:'Share Tech Mono',monospace; font-size:0.85rem; letter-spacing:1px; cursor:default; transition:all 0.25s ease; white-space:nowrap; }
+  .chip-cyan { background:rgba(0,212,255,0.07); border:1px solid rgba(0,212,255,0.35); color:#00d4ff; }
+  .chip-cyan:hover { background:rgba(0,212,255,0.2); box-shadow:0 0 16px rgba(0,212,255,0.4); transform:scale(1.06); }
+  .chip-gold { background:rgba(245,200,66,0.08); border:1px solid rgba(245,200,66,0.4); color:#f5c842; }
+  .chip-gold:hover { background:rgba(245,200,66,0.2); box-shadow:0 0 16px rgba(245,200,66,0.4); transform:scale(1.06); }
+  @keyframes chipPop{from{opacity:0;transform:scale(0.6)}to{opacity:1;transform:scale(1)}}
+
+  /* FOOTER */
+  footer { padding:40px 20px 30px; text-align:center; border-top:1px solid rgba(0,212,255,0.1); position:relative; z-index:2; }
+  .footer-logo { font-family:'Orbitron',monospace; font-size:1.2rem; color:var(--cyan); text-shadow:0 0 10px var(--cyan-glow); letter-spacing:4px; margin-bottom:8px; }
+  .footer-text { font-size:0.7rem; letter-spacing:3px; color:var(--text-dim); text-transform:uppercase; }
+
+  /* LIGHTBOX */
+  #lightbox { display:none; position:fixed; inset:0; z-index:500; background:rgba(4,13,26,0.95); align-items:center; justify-content:center; backdrop-filter:blur(10px); }
+  #lightbox.open { display:flex; }
+  #lightbox img { max-width:90vw; max-height:90vh; border-radius:12px; border:1px solid var(--cyan); box-shadow:0 0 60px var(--cyan-glow); }
+  .close-lb { position:absolute; top:20px; right:24px; font-family:'Orbitron',monospace; font-size:1.5rem; color:var(--cyan); cursor:pointer; background:none; border:none; }
+
+  /* HERO ENHANCEMENTS */
+  .hero-badge {
+    display:inline-block;
+    border:1px solid rgba(0,212,255,0.4);
+    color:var(--cyan);
+    font-size:0.65rem; letter-spacing:4px;
+    text-transform:uppercase;
+    padding:6px 20px; border-radius:40px;
+    margin-bottom:18px;
+    background:rgba(0,212,255,0.07);
+    box-shadow:0 0 16px rgba(0,212,255,0.15);
+    animation:fadeDown 1s ease both;
+  }
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+
+  .hero-underline {
+    width:180px; height:2px;
+    background:linear-gradient(to right, transparent, var(--cyan), transparent);
+    margin:16px auto 0;
+    animation:pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:0.4;width:120px}50%{opacity:1;width:220px}}
+
+  /* SECTION ENHANCEMENTS */
+  .sec { border-radius:0; }
+  .section-tag { 
+    background:rgba(0,212,255,0.06);
+    padding:4px 12px; border-radius:20px;
+    border:1px solid rgba(0,212,255,0.2);
+  }
+
+  /* VIDEO hover glow */
+  .video-frame::after {
+    content:'';position:absolute;inset:0;border-radius:14px;
+    box-shadow:inset 0 0 30px rgba(0,212,255,0.06);
+    pointer-events:none;
+  }
+
+  /* PHOTO shimmer on hover */
+  .photo-frame::after {
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(0,212,255,0.04),transparent);
+    opacity:0;transition:opacity 0.3s;pointer-events:none;
+  }
+  .photo-frame:hover::after{opacity:1;}
+
+  /* QUOTE glow */
+  .quote-box {
+    box-shadow:0 0 40px rgba(0,212,255,0.08), 0 20px 50px rgba(0,0,0,0.4);
+  }
+  .quote-box::after {
+    content:'"'; position:absolute; bottom:-10px; right:20px;
+    font-family:'Orbitron',monospace; font-size:5rem;
+    color:rgba(0,212,255,0.05); pointer-events:none; line-height:1;
+  }
+
+  /* FOOTER glow line */
+  footer { background:linear-gradient(180deg,transparent,rgba(0,212,255,0.03)); }
+  footer::before {
+    content:''; display:block; height:1px;
+    background:linear-gradient(to right,transparent,var(--cyan),transparent);
+    opacity:0.3; margin-bottom:30px;
+  }
+
+  /* MUSIC player pulse */
+  .music-player {
+    box-shadow:0 0 30px rgba(0,212,255,0.08),0 10px 30px rgba(0,0,0,0.3);
+    transition:box-shadow 0.3s;
+  }
+  .music-player:hover { box-shadow:0 0 50px rgba(0,212,255,0.15),0 10px 30px rgba(0,0,0,0.3); }
+
+  /* CHIP count badge */
+  .chip-count {
+    font-size:0.6rem; letter-spacing:2px;
+    color:rgba(0,212,255,0.4); margin-top:10px; text-align:center;
+  }
+
+  /* REVEAL */
+  .reveal { opacity:0; transform:translateY(30px); transition:opacity 0.8s ease,transform 0.8s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<div id="lightbox">
+  <button class="close-lb" onclick="closeLb()">✕</button>
+  <img id="lbImg" src="" alt="">
+</div>
+
+<audio id="bgMusic" loop>
+  <source src="musik.mp3" type="audio/mpeg">
+</audio>
+<audio id="bgMusic2" loop>
+  <source src="musik2.mp3" type="audio/mpeg">
+</audio>
+
+<!-- BOOT SCREEN -->
+<div id="bootScreen">
+  <div class="boot-box">
+    <div id="runState">
+      <div class="boot-title">6B SYSTEM</div>
+      <div class="boot-sub">[ Ready to Execute ]</div>
+      <button id="runBtn" onclick="startBoot()">RUN 6B.EXE</button>
+    </div>
+    <div id="bootingState">
+      <div class="booting-title">Analyzing Memory 6B</div>
+      <div class="boot-sub">[ Ready to Execute ]</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="boot-log" id="bootLog"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="mainContent">
+
+  <!-- HERO -->
+  <div class="hero-text">
+    
+    <div class="hero-class">KELAS 6B</div>
+    <div class="hero-underline"></div>
+    <div class="hero-year">// KELULUSAN · TAHUN AJARAN 2025/2026 //</div>
+  </div>
+
+  <!-- VIDEOS -->
+  <section class="sec reveal">
+    <div class="section-header">
+      <span class="section-tag">▶ VIDEO</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="videos-grid">
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio1.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO_01.MP4 //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio2.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO_02.MP4 //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio3.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO_03.MP4 //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio4.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO_04.MP4 //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio5.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO_05.MP4 //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio6.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO_06.MP4 //</div>
+      </div>
+      <div class="video-frame">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <video controls playsinline><source src="vidio7.mp4" type="video/mp4"></video>
+        <div class="video-label">// VIDIO_07.MP4 //</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHOTOS -->
+  <section class="sec reveal">
+    <div class="section-header">
+      <span class="section-tag">📸 FOTO</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="photos-grid">
+      <div class="photo-frame" onclick="openLb('foto1.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto1.jpg" alt="Foto 1" loading="lazy">
+        <div class="photo-label">// FOTO_01 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto2.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto2.jpg" alt="Foto 2" loading="lazy">
+        <div class="photo-label">// FOTO_02 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto3.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto3.jpg" alt="Foto 3" loading="lazy">
+        <div class="photo-label">// FOTO_03 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto4.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto4.jpg" alt="Foto 4" loading="lazy">
+        <div class="photo-label">// FOTO_04 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto5.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto5.jpg" alt="Foto 5" loading="lazy">
+        <div class="photo-label">// FOTO_05 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto6.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto6.jpg" alt="Foto 6" loading="lazy">
+        <div class="photo-label">// FOTO_06 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto7.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto7.jpg" alt="Foto 7" loading="lazy">
+        <div class="photo-label">// FOTO_07 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto8.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto8.jpg" alt="Foto 8" loading="lazy">
+        <div class="photo-label">// FOTO_08 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto9.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto9.jpg" alt="Foto 9" loading="lazy">
+        <div class="photo-label">// FOTO_09 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto10.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto10.jpg" alt="Foto 10" loading="lazy">
+        <div class="photo-label">// FOTO_10 //</div>
+      </div>
+      <div class="photo-frame" onclick="openLb('foto11.jpg')">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img src="foto11.jpg" alt="Foto 11" loading="lazy">
+        <div class="photo-label">// FOTO_11 //</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MUSIC -->
+  <section class="sec reveal">
+    <div class="section-header">
+      <span class="section-tag">🎵 MUSIK</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="music-player">
+      <div class="music-icon" id="musicIcon" onclick="toggleMusic()">▶</div>
+      <div class="music-info">
+        <div class="music-title" id="musicTitle">Piano Man — Billy Joel</div>
+        <div class="music-status" id="musicStatus">[ KLIK ▶ UNTUK PUTAR ]</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+        <div class="music-wave" id="musicWave" style="opacity:0.3">
+          <div class="wave-bar" style="--spd:0.5s;--h:18px"></div>
+          <div class="wave-bar" style="--spd:0.7s;--h:12px"></div>
+          <div class="wave-bar" style="--spd:0.4s;--h:20px"></div>
+          <div class="wave-bar" style="--spd:0.6s;--h:8px"></div>
+          <div class="wave-bar" style="--spd:0.8s;--h:16px"></div>
+        </div>
+        <button onclick="switchSong()" style="
+          background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.4);
+          color:#00d4ff;font-family:'Share Tech Mono',monospace;font-size:0.6rem;
+          letter-spacing:1px;padding:4px 10px;border-radius:20px;cursor:pointer;
+          transition:all 0.2s;white-space:nowrap;
+        " id="switchBtn">⇄ 7 YEARS</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="sec reveal" style="max-width:700px;">
+    <div class="quote-box">
+      <p class="quote-text">Kita mungkin berpisah jalan setelah hari ini, tapi kenangan yang kita ukir bersama di kelas 6B tidak akan pernah terhapus. Selamat menempuh babak baru yang penuh cahaya!</p>
+      <div class="quote-author">// END OF 6B CHAPTER · BEGIN NEW JOURNEY //</div>
+    </div>
+  </section>
+
+  <!-- GURU -->
+  <section class="sec reveal">
+    <div class="section-header">
+      <span class="section-tag">★ GURU KELAS 6B</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="chip-grid" id="guruGrid"></div>
+  </section>
+
+  <!-- SISWA -->
+  <section class="sec reveal">
+    <div class="section-header">
+      <span class="section-tag">👾 SISWA KELAS 6B</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="chip-grid" id="siswaGrid"></div>
+    <div class="chip-count" id="siswaCount"></div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">6B.EXE</div>
+    <div class="footer-text">System Loaded · Kenangan Tersimpan · 2025-2026</div>
+    <button onclick="openAbout()" style="
+      margin-top:20px;
+      background:rgba(0,212,255,0.07);
+      border:1px solid rgba(0,212,255,0.35);
+      color:#00d4ff;
+      font-family:'Share Tech Mono',monospace;
+      font-size:0.7rem;
+      letter-spacing:2px;
+      padding:8px 20px;
+      border-radius:20px;
+      cursor:pointer;
+      transition:all 0.25s;
+    " onmouseover="this.style.background='rgba(0,212,255,0.18)';this.style.boxShadow='0 0 14px rgba(0,212,255,0.4)'"
+       onmouseout="this.style.background='rgba(0,212,255,0.07)';this.style.boxShadow=''">
+      // ABOUT //
+    </button>
+  </footer>
+
+  <!-- ABOUT OVERLAY -->
+  <div id="aboutOverlay" style="
+    display:none; position:fixed; inset:0; z-index:500;
+    background:rgba(4,13,26,0.92);
+    backdrop-filter:blur(10px);
+    align-items:center; justify-content:center;
+  ">
+    <div style="
+      border:1px solid rgba(0,212,255,0.3); border-radius:20px;
+      padding:50px 50px; text-align:center;
+      background:rgba(0,212,255,0.05);
+      box-shadow:0 0 60px rgba(0,212,255,0.15);
+      min-width:300px; max-width:90vw; max-width:520px;
+      position:relative;
+    ">
+      <!-- close btn -->
+      <button onclick="closeAbout()" style="
+        position:absolute;top:16px;right:20px;
+        background:none;border:none;color:rgba(0,212,255,0.5);
+        font-family:'Orbitron',monospace;font-size:1rem;cursor:pointer;
+      ">✕</button>
+
+      <div style="font-family:'Orbitron',monospace;font-size:clamp(1rem,3vw,1.4rem);font-weight:900;color:var(--text);text-shadow:0 0 16px var(--cyan);letter-spacing:4px;margin-bottom:8px;">ABOUT.EXE</div>
+      <div style="font-size:0.75rem;color:var(--cyan);letter-spacing:2px;margin-bottom:24px;" id="aboutStatus">[ Loading... ]</div>
+
+      <!-- progress bar -->
+      <div style="width:100%;height:8px;background:rgba(0,212,255,0.15);border-radius:10px;overflow:hidden;margin-bottom:16px;">
+        <div id="aboutProgress" style="height:100%;width:0%;background:linear-gradient(90deg,#0088aa,var(--cyan));border-radius:10px;box-shadow:0 0 12px var(--cyan);transition:width 0.08s linear;"></div>
+      </div>
+
+      <div id="aboutLog" style="font-size:0.65rem;color:var(--text-dim);text-align:left;min-height:60px;line-height:1.8;overflow:hidden;font-family:'Share Tech Mono',monospace;"></div>
+
+      <!-- final message -->
+      <div id="aboutFinal" style="display:none;margin-top:24px;">
+        <div style="height:1px;background:linear-gradient(to right,transparent,rgba(0,212,255,0.3),transparent);margin-bottom:20px;"></div>
+        <p style="font-family:'Nunito',sans-serif;font-size:1rem;line-height:1.9;color:rgba(200,238,255,0.85);font-weight:300;">
+          This website was created by <span style="color:#f5c842;font-weight:700;">William</span> and <span style="color:#00d4ff;font-weight:700;">Claude</span>
+        </p>
+        <div style="margin-top:16px;font-size:0.6rem;letter-spacing:3px;color:rgba(200,238,255,0.25);">// END OF FILE //</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // PARTICLES
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const s = Math.random() * 3 + 1;
+    p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;bottom:${Math.random()*30}%;--dur:${8+Math.random()*12}s;--delay:${Math.random()*10}s;--op:${0.2+Math.random()*0.5};`;
+    pc.appendChild(p);
+  }
+
+  // BOOT
+  const logs = [
+    '> Memuat sistem kenangan...',
+    '> Mengaktifkan 7 modul video...',
+    '> Loading 11 foto kenangan...',
+    '> Loading Piano Man.mp3...',
+    '> Memverifikasi 30 data siswa...',
+    '> Sistem siap. Selamat datang! 🎓',
+  ];
+
+  function startBoot() {
+    document.getElementById('runState').classList.add('hide');
+    document.getElementById('bootingState').classList.add('active');
+    const fill = document.getElementById('progressFill');
+    const logEl = document.getElementById('bootLog');
+    let progress = 0, logIdx = 0;
+    const interval = setInterval(() => {
+      progress += 1.4;
+      fill.style.width = Math.min(progress, 100) + '%';
+      if (progress >= (logIdx + 1) * 16 && logIdx < logs.length) {
+        logEl.innerHTML += logs[logIdx] + '<br>';
+        logIdx++;
+      }
+      if (progress >= 100) { clearInterval(interval); setTimeout(launchMain, 600); }
+    }, 40);
+  }
+
+  function launchMain() {
+    const bs = document.getElementById('bootScreen');
+    bs.classList.add('hide');
+    setTimeout(() => {
+      bs.style.display = 'none';
+      const mc = document.getElementById('mainContent');
+      mc.classList.add('show');
+      buildGrids();
+      initReveal();
+      tryPlayMusic();
+    }, 800);
+  }
+
+  // GRIDS
+  function buildGrids() {
+    const guru = ['Agustina Parjilah S.Pd.SD'];
+    const siswa = [
+      'Adelle Dwi Andrya','Alvaro Gabriel Banjarnahor','Alvaro Nosaro Telaumbanua',
+      'Archangela Naomi Aurelia Putri','Bryan Alex Sandrio','Charis Zoe Riwu',
+      'Chintya Verandha','Edward Felix','Fadjar Pratama','Felicia Clarissa',
+      'Gabriela Angely Vallerie','Gyel Prant Lauren Simanjuntak','Juan Hendrik Sihotang',
+      'Kevin Agustinus Pasaribu','Khatarina Elsa Teja','Laurenzo Alvaro Mitedede',
+      'Margaretha Bella Ferissa','Margareth Berliana Boru Barutu','Mediana Julita Manurung',
+      'Monika Kamea Aphrodita','Michaell Prakoso Wicaksono','Nathalia Kartika Vidi',
+      'Putri Angel Kristiani Lumban Gaol','Rizki Aditia Pratama','Sharon Revia Karunia Sagala',
+      'Stacey Anastasia Siagian','Stiven Imanuel Boko','Verrel Rodeardo Sinurat',
+      'William Daud','Yocelyn'
+    ];
+
+    const gEl = document.getElementById('guruGrid');
+    guru.forEach((name, i) => {
+      const c = document.createElement('div');
+      c.className = 'chip chip-gold';
+      c.textContent = '★ ' + name;
+      c.style.animation = `chipPop 0.5s cubic-bezier(.175,.885,.32,1.275) ${i*0.08}s both`;
+      gEl.appendChild(c);
+    });
+
+    const sEl = document.getElementById('siswaGrid');
+    siswa.forEach((name, i) => {
+      if (name === 'William Daud') {
+        const br = document.createElement('div');
+        br.style.cssText = 'width:100%;height:0;flex-basis:100%;';
+        sEl.appendChild(br);
+      }
+      const c = document.createElement('div');
+      c.className = 'chip chip-cyan';
+      c.textContent = '> ' + name;
+      c.style.animation = `chipPop 0.4s cubic-bezier(.175,.885,.32,1.275) ${i*0.04}s both`;
+      sEl.appendChild(c);
+    });
+    const countEl = document.getElementById('siswaCount');
+    if (countEl) countEl.textContent = `// ${siswa.length} SISWA TERDAFTAR //`;
+  }
+
+  // MUSIC
+  const songs = [
+    { audio: document.getElementById('bgMusic'),  title: 'Piano Man — Billy Joel',     next: '⇄ 7 YEARS' },
+    { audio: document.getElementById('bgMusic2'), title: '7 Years — Lukas Graham',     next: '⇄ PIANO MAN' },
+  ];
+  let currentSong = 0;
+  let playing = false;
+
+  const musicIcon   = document.getElementById('musicIcon');
+  const musicStatus = document.getElementById('musicStatus');
+  const musicWave   = document.getElementById('musicWave');
+  const musicTitle  = document.getElementById('musicTitle');
+  const switchBtn   = document.getElementById('switchBtn');
+
+  function tryPlayMusic() {
+    songs[currentSong].audio.play().then(() => {
+      playing = true;
+      musicIcon.textContent = '⏸';
+      musicStatus.textContent = '[ PLAYING ]';
+      musicWave.style.opacity = '1';
+    }).catch(() => {
+      musicStatus.textContent = '[ KLIK ▶ UNTUK PUTAR ]';
+    });
+  }
+
+  function toggleMusic() {
+    const a = songs[currentSong].audio;
+    if (playing) {
+      a.pause(); playing = false;
+      musicIcon.textContent = '▶';
+      musicStatus.textContent = '[ PAUSED ]';
+      musicWave.style.opacity = '0.3';
+    } else {
+      a.play(); playing = true;
+      musicIcon.textContent = '⏸';
+      musicStatus.textContent = '[ PLAYING ]';
+      musicWave.style.opacity = '1';
+    }
+  }
+
+  function switchSong() {
+    const wasPlaying = playing;
+    songs[currentSong].audio.pause();
+    songs[currentSong].audio.currentTime = 0;
+    playing = false;
+    currentSong = currentSong === 0 ? 1 : 0;
+    musicTitle.textContent = songs[currentSong].title;
+    switchBtn.textContent = '⇄ ' + songs[currentSong === 0 ? 1 : 0].title.split(' —')[0].toUpperCase();
+    if (wasPlaying) {
+      songs[currentSong].audio.play().then(() => {
+        playing = true;
+        musicIcon.textContent = '⏸';
+        musicStatus.textContent = '[ PLAYING ]';
+        musicWave.style.opacity = '1';
+      });
+    } else {
+      musicStatus.textContent = '[ PAUSED ]';
+      musicIcon.textContent = '▶';
+      musicWave.style.opacity = '0.3';
+    }
+  }
+
+  // ABOUT OVERLAY
+  function openAbout() {
+    const overlay = document.getElementById('aboutOverlay');
+    overlay.style.display = 'flex';
+    // reset
+    document.getElementById('aboutProgress').style.width = '0%';
+    document.getElementById('aboutLog').innerHTML = '';
+    document.getElementById('aboutFinal').style.display = 'none';
+    document.getElementById('aboutStatus').textContent = '[ Loading... ]';
+
+    const logs = [
+      '> Opening about.txt...',
+      '> Loading creator data...',
+      '> William detected ✓',
+      '> Claude AI detected ✓',
+      '> Done! 💾',
+    ];
+    let progress = 0, logIdx = 0;
+    const fill = document.getElementById('aboutProgress');
+    const logEl = document.getElementById('aboutLog');
+
+    const iv = setInterval(() => {
+      progress += 1.8;
+      fill.style.width = Math.min(progress, 100) + '%';
+      if (progress >= (logIdx + 1) * 20 && logIdx < logs.length) {
+        logEl.innerHTML += logs[logIdx] + '<br>';
+        logIdx++;
+      }
+      if (progress >= 100) {
+        clearInterval(iv);
+        document.getElementById('aboutStatus').textContent = '[ Complete ]';
+        document.getElementById('aboutFinal').style.display = 'block';
+      }
+    }, 40);
+  }
+
+  function closeAbout() {
+    document.getElementById('aboutOverlay').style.display = 'none';
+  }
+  document.getElementById('aboutOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeAbout();
+  });
+
+  // LIGHTBOX
+  function openLb(src) { document.getElementById('lbImg').src = src; document.getElementById('lightbox').classList.add('open'); }
+  function closeLb() { document.getElementById('lightbox').classList.remove('open'); }
+  document.getElementById('lightbox').addEventListener('click', function(e) { if(e.target===this) closeLb(); });
+
+  // REVEAL
+  function initReveal() {
+    const els = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.05 });
+    els.forEach(el => obs.observe(el));
+  }
+</script>
+</body>
+</html>
